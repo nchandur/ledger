@@ -79,7 +79,7 @@ func CalculateNetAndTransactions(groupName string) error {
 		return err
 	}
 
-	transac := split.SimplifyDebts(people)
+	transac := split.SettleOptimal(people)
 
 	transactions := db.Client.Database("ledgers").Collection("transactions")
 

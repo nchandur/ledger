@@ -4,61 +4,69 @@ import (
 	"ledger/models"
 	"maps"
 	"math"
-	"sort"
 )
 
-func SimplifyDebts(expenses map[string]float64) []models.Transaction {
-	const epsilon = 1e-9
-	var transactions []models.Transaction
+func SettleGreedy(people models.People) []models.Transaction {
+	balances := maps.Clone(people)
 
-	balances := maps.Clone(expenses)
-
-	type person struct {
-		Name    string
-		Balance float64
+	var lenders []struct {
+		name  string
+		value float64
 	}
 
-	for {
-		var creditors []person
-		var debtors []person
+	var borrowers []struct {
+		name  string
+		value float64
+	}
 
-		for name, balance := range balances {
-			if math.Abs(balance) < epsilon {
-				continue
-			}
-			if balance > 0 {
-				creditors = append(creditors, person{name, balance})
-			} else {
-				debtors = append(debtors, person{name, balance})
-			}
+	for key, val := range balances {
+		if val > 0 {
+			lenders = append(lenders, struct {
+				name  string
+				value float64
+			}{key, val})
+		} else if val < 0 {
+			borrowers = append(borrowers, struct {
+				name  string
+				value float64
+			}{key, val})
+		}
+	}
+
+	l, b := 0, 0
+
+	transactions := []models.Transaction{}
+
+	for l < len(lenders) && b < len(borrowers) {
+		lender, lent := lenders[l].name, lenders[l].value
+		borrower, borrowed := borrowers[b].name, borrowers[b].value
+
+		transferAmount := min(lent, -borrowed)
+
+		transactions = append(transactions, models.Transaction{From: borrower, To: lender, Amount: transferAmount})
+
+		lent -= transferAmount
+		borrowed += transferAmount
+
+		if math.Abs(lent) < 1e-10 {
+			l++
+		} else {
+			lenders[l] = struct {
+				name  string
+				value float64
+			}{lender, lent}
 		}
 
-		if len(creditors) == 0 || len(debtors) == 0 {
-			break
+		if math.Abs(borrowed) < 1e-10 {
+			b++
+		} else {
+			borrowers[b] = struct {
+				name  string
+				value float64
+			}{borrower, borrowed}
 		}
-
-		sort.Slice(creditors, func(i, j int) bool {
-			return creditors[i].Balance > creditors[j].Balance
-		})
-		sort.Slice(debtors, func(i, j int) bool {
-			return debtors[i].Balance < debtors[j].Balance
-		})
-
-		creditor := creditors[0]
-		debtor := debtors[0]
-
-		amount := math.Min(creditor.Balance, -debtor.Balance)
-		amount = math.Round(amount*1000000) / 1000000
-
-		transactions = append(transactions, models.Transaction{
-			From:   debtor.Name,
-			To:     creditor.Name,
-			Amount: amount,
-		})
-
-		balances[creditor.Name] -= amount
-		balances[debtor.Name] += amount
 	}
 
 	return transactions
+
 }
