@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (g *Group) UpdatePrice(itemID int, update bson.D) error {
+func (g *Group) UpdateItemByID(itemID int, update map[string]any) error {
 	filter := bson.D{
 		{Key: "item_id", Value: itemID},
 	}

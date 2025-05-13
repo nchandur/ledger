@@ -18,7 +18,7 @@ func (g *Group) AddItem(expense models.Expense) error {
 	}
 
 	if !exists {
-		fmt.Println("group does not exist. creating it")
+		return fmt.Errorf("group does not exist")
 	}
 
 	count, err := g.Collection.CountDocuments(context.TODO(), bson.D{})
@@ -27,9 +27,8 @@ func (g *Group) AddItem(expense models.Expense) error {
 		return fmt.Errorf("error adding item %s: %v", expense.Item, err)
 	}
 
-	expense.ItemID = int(count + 1)
+	expense.ItemID = int(count)
 	expense.TimeStamp = time.Now()
-
 	_, err = g.Collection.InsertOne(context.TODO(), expense)
 
 	if err != nil {

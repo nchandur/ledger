@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"ledger/db"
+	"ledger/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -39,20 +41,31 @@ func AccessGroup(groupName string) (Group, error) {
 	return Group{}, fmt.Errorf("group does not exist")
 }
 
-func CreateGroup(groupName string) (Group, error) {
+func CreateGroup(groupName string) error {
 
 	exists, err := Exists(groupName)
 
 	if err != nil {
-		return Group{}, err
+		return err
 	}
 
 	if exists {
-		return Group{}, fmt.Errorf("group already exists!")
+		return fmt.Errorf("group already exists!")
 	}
 
 	g := Group{Collection: db.Client.Database("ledgers").Collection(groupName)}
-	return g, nil
+
+	expense := models.Expense{}
+
+	expense.ItemID = 0
+	expense.TimeStamp = time.Now().In(time.Local)
+
+	_, err = g.Collection.InsertOne(context.TODO(), expense)
+
+	if err != nil {
+		return fmt.Errorf("error adding item %s: %v", expense.Item, err)
+	}
+	return nil
 }
 
 func (g *Group) Delete() error {

@@ -3,16 +3,15 @@ package crud
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (g *Group) RemoveItem(itemID int, date time.Time) error {
+func (g *Group) RemoveItemByID(itemID int) error {
 
 	filter := bson.D{{Key: "item_id", Value: itemID}}
 
-	count, err := g.Collection.DeleteMany(context.TODO(), filter)
+	count, err := g.Collection.DeleteOne(context.TODO(), filter)
 
 	if err != nil {
 		return err

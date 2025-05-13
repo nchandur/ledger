@@ -20,6 +20,13 @@ func SetUpRouter() *gin.Engine {
 	}))
 
 	LandingHandler(r)
+	CreateGroupHandler(r)
+	DeleteGroupHandler(r)
+
+	AddItemHandler(r)
+	RetrieveItemHandler(r)
+	UpdateItemByIDHandler(r)
+	RemoveItemByIDHandler(r)
 
 	return r
 
