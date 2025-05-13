@@ -2,13 +2,16 @@ package split
 
 import (
 	"ledger/models"
+	"maps"
 	"math"
 	"sort"
 )
 
-func SimplifyDebts(balances map[string]float64) []models.Transaction {
+func SimplifyDebts(expenses map[string]float64) []models.Transaction {
 	const epsilon = 1e-9
 	var transactions []models.Transaction
+
+	balances := maps.Clone(expenses)
 
 	type person struct {
 		Name    string
