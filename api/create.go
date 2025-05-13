@@ -64,6 +64,16 @@ func AddItemHandler(r *gin.Engine) {
 			return
 		}
 
+		err = crud.CalculateNetAndTransactions(groupName)
+
+		if err != nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"body":  nil,
+				"error": err.Error(),
+			})
+			return
+		}
+
 		ctx.JSON(http.StatusOK, gin.H{
 			"body":  fmt.Sprintf("item %s added to group %s", expense.Item, groupName),
 			"error": nil,

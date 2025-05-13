@@ -7,7 +7,7 @@ import (
 )
 
 type Expense struct {
-	TimeStamp time.Time `bson:"time_added" json:"time_added"`
+	TimeStamp time.Time `bson:"updated_at" json:"updated_at"`
 	ItemID    int       `bson:"item_id" json:"item_id"`
 	Item      string    `bson:"item" json:"item"`
 	Price     float64   `bson:"price" json:"price"`

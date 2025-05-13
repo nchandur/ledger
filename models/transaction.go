@@ -3,9 +3,9 @@ package models
 import "fmt"
 
 type Transaction struct {
-	From   string  `json:"from"`
-	To     string  `json:"to"`
-	Amount float64 `json:"amount"`
+	From   string  `bson:"from" json:"from"`
+	To     string  `bson:"to" json:"to"`
+	Amount float64 `bson:"amount" json:"amount"`
 }
 
 func (t *Transaction) Display() {

@@ -42,6 +42,16 @@ func UpdateItemByIDHandler(r *gin.Engine) {
 			return
 		}
 
+		err = crud.CalculateNetAndTransactions(groupName)
+
+		if err != nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"body":  nil,
+				"error": err.Error(),
+			})
+			return
+		}
+
 		ctx.JSON(http.StatusOK, gin.H{
 			"body":  "updated item",
 			"error": nil,

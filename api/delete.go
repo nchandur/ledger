@@ -68,6 +68,16 @@ func RemoveItemByIDHandler(r *gin.Engine) {
 			return
 		}
 
+		err = crud.CalculateNetAndTransactions(group.Collection.Name())
+
+		if err != nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"body":  nil,
+				"error": err.Error(),
+			})
+			return
+		}
+
 		ctx.JSON(http.StatusOK, gin.H{
 			"body":  "removed item from group",
 			"error": nil,

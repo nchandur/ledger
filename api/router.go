@@ -28,6 +28,9 @@ func SetUpRouter() *gin.Engine {
 	UpdateItemByIDHandler(r)
 	RemoveItemByIDHandler(r)
 
+	GetBalancesHandler(r)
+	GetTransactionsHandler(r)
+
 	return r
 
 }
