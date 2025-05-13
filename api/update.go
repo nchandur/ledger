@@ -23,7 +23,16 @@ func UpdateItemByIDHandler(r *gin.Engine) {
 		}
 
 		id := ctx.Query("item_id")
+
 		itemID, err := strconv.Atoi(id)
+
+		if err != nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"body":  nil,
+				"error": err.Error(),
+			})
+			return
+		}
 
 		var update map[string]any
 
