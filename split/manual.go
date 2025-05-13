@@ -3,8 +3,14 @@ package split
 import (
 	"fmt"
 	"ledger/models"
-	"ledger/utils"
+	"math"
 )
+
+func roundToCent(val float64) float64 {
+	val = math.Round(val * 100)
+
+	return val / 100
+}
 
 func checkManual(splits []float64, total float64) bool {
 	var sum float64
@@ -12,7 +18,7 @@ func checkManual(splits []float64, total float64) bool {
 	for _, split := range splits {
 		sum += split
 	}
-	return utils.RoundToCent(sum) == utils.RoundToCent(total)
+	return roundToCent(sum) == roundToCent(total)
 }
 
 func SplitManual(expense models.Expense, people models.People) error {
