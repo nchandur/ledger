@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ledger/db"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -12,7 +13,7 @@ import (
 
 func GetTransactionsHandler(r *gin.Engine) {
 	r.GET("/group/transactions", func(ctx *gin.Context) {
-		name := ctx.Query("group")
+		name := strings.TrimSpace(ctx.Query("group"))
 
 		filter := bson.M{
 			"group": name,

@@ -10,6 +10,9 @@ import (
 func SetUpRouter() *gin.Engine {
 	r := gin.Default()
 
+	r.LoadHTMLGlob("templates/*")
+	r.Static("/static", "./static")
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "UPDATE", "DELETE"},
@@ -20,16 +23,7 @@ func SetUpRouter() *gin.Engine {
 	}))
 
 	LandingHandler(r)
-	CreateGroupHandler(r)
-	DeleteGroupHandler(r)
-
-	AddItemHandler(r)
-	RetrieveItemHandler(r)
-	UpdateItemByIDHandler(r)
-	RemoveItemByIDHandler(r)
-
-	GetBalancesHandler(r)
-	GetTransactionsHandler(r)
+	GroupsHandler(r)
 
 	return r
 

@@ -5,13 +5,14 @@ import (
 	"ledger/crud"
 	"ledger/models"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CreateGroupHandler(r *gin.Engine) {
 	r.GET("/group/create", func(ctx *gin.Context) {
-		name := ctx.Query("group")
+		name := strings.TrimSpace(ctx.Query("group"))
 
 		err := crud.CreateGroup(name)
 
@@ -33,7 +34,7 @@ func CreateGroupHandler(r *gin.Engine) {
 
 func AddItemHandler(r *gin.Engine) {
 	r.POST("/group/item/add", func(ctx *gin.Context) {
-		groupName := ctx.Query("group")
+		groupName := strings.TrimSpace(ctx.Query("group"))
 
 		group, err := crud.AccessGroup(groupName)
 

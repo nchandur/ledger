@@ -5,13 +5,14 @@ import (
 	"ledger/crud"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func DeleteGroupHandler(r *gin.Engine) {
 	r.DELETE("/group", func(ctx *gin.Context) {
-		name := ctx.Query("group")
+		name := strings.TrimSpace(ctx.Query("group"))
 
 		group, err := crud.AccessGroup(name)
 
@@ -43,7 +44,7 @@ func DeleteGroupHandler(r *gin.Engine) {
 
 func RemoveItemByIDHandler(r *gin.Engine) {
 	r.DELETE("/group/item", func(ctx *gin.Context) {
-		name := ctx.Query("group")
+		name := strings.TrimSpace(ctx.Query("group"))
 
 		group, err := crud.AccessGroup(name)
 

@@ -4,13 +4,14 @@ import (
 	"ledger/crud"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func UpdateItemByIDHandler(r *gin.Engine) {
 	r.PUT("/group/item", func(ctx *gin.Context) {
-		groupName := ctx.Query("group")
+		groupName := strings.TrimSpace(ctx.Query("group"))
 
 		group, err := crud.AccessGroup(groupName)
 

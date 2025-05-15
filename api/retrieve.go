@@ -4,13 +4,14 @@ import (
 	"ledger/crud"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func RetrieveItemHandler(r *gin.Engine) {
 	r.GET("/group/item", func(ctx *gin.Context) {
-		id := ctx.Query("item_id")
+		id := strings.TrimSpace(ctx.Query("item_id"))
 		groupName := ctx.Query("group")
 
 		group, err := crud.AccessGroup(groupName)

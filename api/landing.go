@@ -8,9 +8,6 @@ import (
 
 func LandingHandler(r *gin.Engine) {
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"body":  "Welcome to Ledger",
-			"error": nil,
-		})
+		ctx.HTML(http.StatusOK, "index.html", nil)
 	})
 }
