@@ -10,16 +10,13 @@
 <body>
     <div class="container mt-5">
         <h1>Group Page</h1>
-        <p><strong>Group Name:</strong> {{ .groupName }}</p>
-        <p><strong>Currency:</strong> {{ .currency }}</p>
-
-        <h3>Participants:</h3>
-        <ul>
-            {{ range .participants }}
-            <li>{{ . }}</li>
-            {{ end }}
-
+        <p><strong>Group Name:</strong> {{ .name }}</p>
+    
+        {{if .error}}
+        <p>{{ .error }}</p>
+        {{end}}
     </div>
+
 </body>
 
 </html>

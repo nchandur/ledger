@@ -2,59 +2,85 @@ package api
 
 import (
 	"fmt"
+	"ledger/crud"
 	"ledger/db"
+	"ledger/models"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GroupsHandler(r *gin.Engine) {
-	r.GET("/groups/view", func(ctx *gin.Context) {
-		database := db.Client.Database("ledgers")
+func CreateGroupHandler(r *gin.Engine) {
+	r.POST("/", func(ctx *gin.Context) {
+		groupName := ctx.PostForm("groupName")
+		currency := ctx.PostForm("currency")
+		participants := ctx.PostFormArray("participants")
 
-		res, err := database.ListCollectionNames(ctx, bson.D{})
+		err := crud.CreateGroup(groupName, participants, currency)
 
 		if err != nil {
-			ctx.HTML(http.StatusInternalServerError, "index.html", gin.H{"message": []string{"Error fetching ledgers"}})
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to create group: %v", err.Error())})
 			return
 		}
 
-		fmt.Println(res)
+		ctx.JSON(http.StatusOK, gin.H{"message": "Group created successfully!"})
 
-		ctx.HTML(http.StatusOK, "index.html", gin.H{"message": res})
+	})
+}
+
+func ViewGroupsHandler(r *gin.Engine) {
+	r.GET("/view", func(ctx *gin.Context) {
+		cur, err := db.Client.Database("ledgers").Collection("groups").Find(ctx, bson.D{})
+
+		if err != nil {
+			ctx.HTML(http.StatusBadRequest, "index.html", gin.H{"error": err.Error()})
+			return
+		}
+
+		groups := []models.Group{}
+
+		for cur.Next(ctx) {
+			var group models.Group
+
+			err = cur.Decode(&group)
+
+			if err != nil {
+				ctx.HTML(http.StatusBadRequest, "index.html", gin.H{"error": err.Error()})
+				return
+			}
+
+			groups = append(groups, group)
+
+		}
+
+		ctx.HTML(http.StatusOK, "index.html", gin.H{"groups": groups})
+
 	})
 
-	r.POST("/groups", func(ctx *gin.Context) {
-		groupName := ctx.PostForm("groupName")
-		participants := ctx.PostFormArray("participants")
-		currency := ctx.PostForm("currency")
+}
 
-		participantStr := url.QueryEscape(strings.Join(participants, ","))
+func GroupHandler(r *gin.Engine) {
+	r.GET("/group", func(ctx *gin.Context) {
 
-		redirectURL := fmt.Sprintf("/groups?groupName=%s&participants=%s&currency=%s",
-			groupName,
-			participantStr,
-			url.QueryEscape(currency),
-		)
+		groupName := strings.TrimSpace(ctx.Query("name"))
 
-		ctx.Redirect(http.StatusSeeOther, redirectURL)
-	})
+		collection := db.Client.Database("ledgers").Collection("groups")
 
-	r.GET("/groups", func(ctx *gin.Context) {
-		groupName := ctx.Query("groupName")
-		participantsRaw := ctx.Query("participants")
-		currency := ctx.Query("currency")
+		var group models.Group
 
-		participants := strings.Split(participantsRaw, ",")
+		err := collection.FindOne(ctx, bson.D{{Key: "group_name", Value: groupName}}).Decode(&group)
+
+		if err != nil {
+			ctx.HTML(http.StatusBadRequest, "groups.html", gin.H{"error": err.Error()})
+			return
+		}
 
 		ctx.HTML(http.StatusOK, "groups.html", gin.H{
-			"groupName":    groupName,
-			"participants": participants,
-			"currency":     currency,
+			"name": groupName,
 		})
+
 	})
 
 }

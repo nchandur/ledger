@@ -1,6 +1,8 @@
 package api
 
 import (
+	"strings"
+	"text/template"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -9,6 +11,10 @@ import (
 
 func SetUpRouter() *gin.Engine {
 	r := gin.Default()
+
+	r.SetFuncMap(template.FuncMap{
+		"join": strings.Join,
+	})
 
 	r.LoadHTMLGlob("templates/*")
 	r.Static("/static", "./static")
@@ -23,7 +29,9 @@ func SetUpRouter() *gin.Engine {
 	}))
 
 	LandingHandler(r)
-	GroupsHandler(r)
+	CreateGroupHandler(r)
+	ViewGroupsHandler(r)
+	GroupHandler(r)
 
 	return r
 

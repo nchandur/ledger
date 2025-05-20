@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"ledger/db"
 	"ledger/models"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,13 +18,13 @@ type Group struct {
 
 func Exists(groupName string) (bool, error) {
 
-	coll, err := db.Client.Database("ledgers").ListCollectionNames(context.Background(), bson.D{{Key: "name", Value: groupName}})
+	res, err := db.Client.Database("ledgers").Collection("groups").CountDocuments(context.Background(), bson.D{{Key: "group_name", Value: strings.TrimSpace(groupName)}})
 
 	if err != nil {
 		return false, err
 	}
 
-	return len(coll) == 1, nil
+	return res >= 1, nil
 
 }
 
@@ -41,7 +42,7 @@ func AccessGroup(groupName string) (Group, error) {
 	return Group{}, fmt.Errorf("group does not exist")
 }
 
-func CreateGroup(groupName string) error {
+func CreateGroup(groupName string, people []string, currency string) error {
 
 	exists, err := Exists(groupName)
 
@@ -53,17 +54,14 @@ func CreateGroup(groupName string) error {
 		return fmt.Errorf("group already exists!")
 	}
 
-	g := Group{Collection: db.Client.Database("ledgers").Collection(groupName)}
+	g := Group{Collection: db.Client.Database("ledgers").Collection("groups")}
 
-	expense := models.Expense{}
+	group := models.Group{TimeStamp: time.Now().In(time.Local), GroupName: groupName, People: people, Currency: currency}
 
-	expense.ItemID = 0
-	expense.TimeStamp = time.Now().In(time.Local)
-
-	_, err = g.Collection.InsertOne(context.TODO(), expense)
+	_, err = g.Collection.InsertOne(context.TODO(), group)
 
 	if err != nil {
-		return fmt.Errorf("error adding item %s: %v", expense.Item, err)
+		return fmt.Errorf("error creating group %s: %v", group.GroupName, err)
 	}
 	return nil
 }
