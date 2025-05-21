@@ -2,21 +2,143 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <title>Group Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <title>{{ $.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="container mt-5">
-        <h1>Group Page</h1>
-        <p><strong>Group Name:</strong> {{ .name }}</p>
-    
-        {{if .error}}
-        <p>{{ .error }}</p>
-        {{end}}
+<body class="p-4">
+
+    <div class="container">
+        <h1>Expenses in Group: {{ $.name }} </h1>
+        <ul class="list-group mb-4">
+            {{range .expenses}}
+            <li class="list-group-item">
+                <strong>{{ .Item }}</strong>
+                <p>${{ .Price }}</p>
+                <p>Lent: {{ .Lent }}</p>
+                <p>Involved: {{ join .Involved ", "}}</p>
+                <form method="POST" action="/group?name={{$.name}}" class="mb-0">
+                    <input type="hidden" name="_action" value="delete">
+                    <input type="hidden" name="id" value="{{.ItemID}}">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </li>
+            {{else}}
+            <li class="list-group-item text-muted">No items found</li>
+            {{end}}
+        </ul>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+            Add New Item
+        </button>
     </div>
 
+    <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="modal-content" method="POST" action="/group?name={{$.name}}" id="add-expense">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="name" value="{{$.name}}">
+                    <input type="hidden" name="_action" value="add">
+
+                    <div class="mb-3">
+                        <label for="nameInput" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="item" name="item" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="priceInput" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lentInput" class="form-label">Lent</label>
+                        <input type="text" class="form-control" id="lent" name="lent" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Participants:</label>
+                        <div id="participants-list">
+                            <input type="text" class="form-control mb-2 participant-input" name="participants"
+                                placeholder="Participant name" required />
+                        </div>
+                        <button type="button" id="addParticipantBtn" class="btn btn-sm btn-outline-primary">Add
+                            Participant</button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="splitType" class="form-label">Currency:</label>
+                        <select class="form-select" id="splitType" name="splitType" required>
+                            <option value="">-- Select Split Type --</option>
+                            <option value="equal">Split Equally</option>
+                            <option value="manual">Split Manually</option>
+                            <option value="percentage">Split By Percentage</option>
+                        </select>
+                    </div>
+
+                    <div id="formFeedback" class="alert d-none" role="alert"></div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('addParticipantBtn').addEventListener('click', function () {
+            const participantsList = document.getElementById('participants-list');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'participants';
+            input.placeholder = 'Participant name';
+            input.required = true;
+            input.className = 'form-control mb-2 participant-input';
+            participantsList.appendChild(input);
+        });
+
+        document.getElementById('add-expense').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const feedback = document.getElementById('formFeedback');
+
+            try {
+                const response = await fetch("/group?name={{$.name}}", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    feedback.className = 'alert alert-success';
+                    feedback.textContent = data.message;
+                    form.reset();
+
+                    const participantsList = document.getElementById('participants-list');
+                    participantsList.innerHTML = `<input type="text" class="form-control mb-2 participant-input" name="participants" placeholder="Participant name" required />`;
+                } else {
+                    feedback.className = 'alert alert-danger';
+                    feedback.textContent = data.error;
+                }
+                feedback.classList.remove('d-none');
+            } catch (error) {
+                feedback.className = 'alert alert-danger';
+                feedback.textContent = 'Network error. Please try again.';
+                feedback.classList.remove('d-none');
+            }
+        });
+
+    </script>
 </body>
 
 </html>
