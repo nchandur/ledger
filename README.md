@@ -35,7 +35,6 @@ Infinity Ledger is a backend web application built with the Gin framework in Go.
 
 - **Backend:** Go (Gin framework)
 - **Database:** MongoDB
-- **Frontend:** None (API-only application)
 
 ## Getting Started
 
