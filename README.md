@@ -48,3 +48,5 @@ Infinity Ledger is a backend web application built with the Gin framework in Go.
 ```
 go run cmd/server.go
 ```
+
+The server will start on http://localhost:8080.
