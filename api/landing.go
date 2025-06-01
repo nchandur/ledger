@@ -8,6 +8,6 @@ import (
 
 func LandingHandler(r *gin.Engine) {
 	r.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "index.html", nil)
+		ctx.JSON(http.StatusOK, gin.H{"body": "Welcome to the Infinity Ledger", "error": nil})
 	})
 }

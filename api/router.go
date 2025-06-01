@@ -1,8 +1,6 @@
 package api
 
 import (
-	"strings"
-	"text/template"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -11,13 +9,6 @@ import (
 
 func SetUpRouter() *gin.Engine {
 	r := gin.Default()
-
-	r.SetFuncMap(template.FuncMap{
-		"join": strings.Join,
-	})
-
-	r.LoadHTMLGlob("templates/*")
-	r.Static("/static", "./static")
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -29,9 +20,7 @@ func SetUpRouter() *gin.Engine {
 	}))
 
 	LandingHandler(r)
-	CreateGroupHandler(r)
-	ViewGroupsHandler(r)
-	GroupHandler(r)
+	GroupsHandler(r)
 
 	return r
 

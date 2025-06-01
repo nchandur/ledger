@@ -44,6 +44,10 @@ func AccessGroup(groupName string) (Group, error) {
 
 func CreateGroup(groupName string, people []string, currency string) error {
 
+	if len(groupName) == 0 {
+		return fmt.Errorf("group name cannot be empty")
+	}
+
 	exists, err := Exists(groupName)
 
 	if err != nil {
