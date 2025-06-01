@@ -7,9 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (g *Group) RemoveItemByID(itemID int) error {
+func (g *Group) RemoveItem(item string) error {
 
-	filter := bson.D{{Key: "item_id", Value: itemID}}
+	filter := bson.D{{Key: "item", Value: item}}
 
 	count, err := g.Collection.DeleteOne(context.TODO(), filter)
 

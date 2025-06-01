@@ -7,8 +7,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (g *Group) RetrieveItemByID(itemID int) (models.Expense, error) {
-	filter := bson.D{{Key: "item_id", Value: itemID}}
+func (g *Group) RetrieveItem(item string) (models.Expense, error) {
+	filter := bson.D{{Key: "item", Value: item}}
 
 	var res models.Expense
 

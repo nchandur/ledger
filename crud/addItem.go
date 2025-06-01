@@ -27,7 +27,7 @@ func (g *Group) AddItem(expense models.Expense) error {
 		return fmt.Errorf("error adding item %s: %v", expense.Item, err)
 	}
 
-	expense.ItemID = int(count)
+	expense.ItemID = int(count) + 1
 	expense.TimeStamp = time.Now()
 	_, err = g.Collection.InsertOne(context.TODO(), expense)
 

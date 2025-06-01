@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"ledger/crud"
 	"ledger/db"
 	"ledger/models"
@@ -44,8 +43,6 @@ func GroupsHandler(r *gin.Engine) {
 		if name != "" {
 			filter = bson.D{{Key: "group_name", Value: name}}
 		}
-
-		fmt.Println(filter)
 
 		cur, err := collection.Find(ctx, filter)
 

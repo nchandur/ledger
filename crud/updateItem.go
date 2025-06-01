@@ -6,9 +6,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (g *Group) UpdateItemByID(itemID int, update map[string]any) error {
+func (g *Group) UpdateItem(item string, update map[string]any) error {
 	filter := bson.D{
-		{Key: "item_id", Value: itemID},
+		{Key: "item", Value: item},
 	}
 
 	_, err := g.Collection.UpdateOne(

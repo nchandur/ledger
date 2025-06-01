@@ -19,9 +19,7 @@ func CalculateNetAndTransactions(groupName string) error {
 		return err
 	}
 
-	filter := bson.M{
-		"item_id": bson.M{"$ne": 0},
-	}
+	filter := bson.M{}
 
 	cursor, err := group.Collection.Find(context.TODO(), filter)
 

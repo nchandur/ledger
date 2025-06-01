@@ -21,6 +21,7 @@ func SetUpRouter() *gin.Engine {
 
 	LandingHandler(r)
 	GroupsHandler(r)
+	LedgerHandler(r)
 
 	return r
 
