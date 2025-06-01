@@ -168,7 +168,7 @@ func LedgerHandler(r *gin.Engine) {
 
 		filter := bson.D{{Key: "group", Value: name}}
 
-		collection := db.Client.Database("ledgers").Collection("balances")
+		collection := db.Client.Database("ledgers").Collection("transactions")
 
 		transactions := bson.M{}
 
