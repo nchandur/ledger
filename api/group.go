@@ -88,10 +88,24 @@ func GroupsHandler(r *gin.Engine) {
 			return
 		}
 
-		db := db.Client.Database(name)
+		_, err = collection.DeleteMany(ctx, bson.D{{}})
 
-		if err := db.Drop(ctx); err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "failed to drop ledger", "body": nil})
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "body": nil})
+			return
+		}
+
+		_, err = db.Client.Database("ledgers").Collection("balances").DeleteOne(ctx, bson.M{"group": name})
+
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "body": nil})
+			return
+		}
+
+		_, err = db.Client.Database("ledgers").Collection("transactions").DeleteOne(ctx, bson.M{"group": name})
+
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "body": nil})
 			return
 		}
 
