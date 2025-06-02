@@ -14,22 +14,22 @@ Infinity Ledger is a backend web application built with the Gin framework in Go.
 ## API Endpoints
 
 ### Group Management
-- `POST /groups/create` — Create a new group
-- `GET /groups/view` — View all existing groups
-- `DELETE /groups/delete` — Delete a group
+- [`POST /groups/create`](api/API.md#post-groupscreate) — Create a new group
+- [`GET /groups/view`](api/API.md#get-groupsview) — View all existing groups
+- [`DELETE /groups/delete`](api/API.md#delete-groupsdelete) — Delete a group
 
 ### Expense Ledger
-- `POST /ledger/add` — Add an expense to a group
-- `GET /ledger/view` — View all expenses for a group
-- `PATCH /ledger/update` — Update an existing expense
-- `DELETE /ledger/delete` — Delete an expense
+- [`GET /ledger/view`](api/API.md#get-ledgerview) — View all expenses for a group
+- [`POST /ledger/add`](api/API.md#post-ledgeradd) — Add an expense to a group
+- [`PATCH /ledger/update`](api/API.md#patch-ledgerupdate) — Update an existing expense
+- [`DELETE /ledger/delete`](api/API.md#delete-ledgerdelete) — Delete an expense
 
 ### Balances & Settlements
-- `GET /ledger/balances` — Get net balance for each person (owed/lent)
-- `GET /ledger/transactions` — Get simplified transactions to settle balances
+- [`GET /ledger/balances`](api/API.md#get-ledgerbalances) — Get net balance for each person (owed/lent)
+- [`GET /ledger/transactions`](api/API.md#get-ledgertransactions) — Get simplified transactions to settle balances
 
 ### Misc
-- `GET /` — Landing route (health check or welcome page)
+- [`GET /`](api/API.md#get-) — Landing route (health check or welcome page)
 
 ## Tech Stack
 

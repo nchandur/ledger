@@ -74,11 +74,6 @@ func GroupsHandler(r *gin.Engine) {
 	r.DELETE("/groups/delete", func(ctx *gin.Context) {
 		name := ctx.Query("name")
 
-		if name == "" {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "missing name parameter", "body": nil})
-			return
-		}
-
 		collection := db.Client.Database("ledgers").Collection("groups")
 
 		res, err := collection.DeleteOne(ctx, bson.M{"group_name": name})
